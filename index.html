@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buchbegleiter – Imperium USA</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #FAFAF6; }
+</style>
+<style>
+  #bb-root, #bb-root * { box-sizing: border-box; }
+  #bb-root {
+    --paper: #FAFAF6;
+    --paper-raised: #FFFFFF;
+    --ink: #1B1B18;
+    --ink-soft: #6B685F;
+    --rule: #D6D2C4;
+    --rule-strong: #1B1B18;
+    --accent: #8A2E28;
+    --accent-soft: #F1E4E1;
+
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100%;
+    padding: 0 0 48px;
+  }
+
+  #bb-root .bb-shell { max-width: 460px; margin: 0 auto; background: var(--paper); min-height: 100vh; }
+
+  #bb-root .bb-header {
+    padding: 28px 24px 20px;
+    border-bottom: 3px solid var(--rule-strong);
+    margin-bottom: 24px;
+  }
+  #bb-root .bb-header .bb-kicker {
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  #bb-root .bb-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    line-height: 1.2;
+  }
+  #bb-root .bb-header .bb-subtitle {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin: 0;
+    font-style: italic;
+  }
+
+  #bb-root .bb-body { padding: 0 24px; }
+
+  #bb-root h2 { font-size: 21px; margin: 0 0 4px; font-weight: 700; }
+  #bb-root .bb-meta {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    letter-spacing: 0.01em;
+  }
+
+  #bb-root .bb-field-label { display: block; font-size: 14.5px; color: var(--ink-soft); margin-bottom: 8px; }
+
+  #bb-root input[type="number"],
+  #bb-root input[type="text"],
+  #bb-root textarea {
+    width: 100%;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 11px 12px;
+    font: inherit;
+    font-size: 17px;
+    color: var(--ink);
+  }
+  #bb-root input:focus, #bb-root textarea:focus { outline: none; border-color: var(--accent); }
+  #bb-root textarea { min-height: 84px; resize: vertical; line-height: 1.45; }
+  #bb-root .bb-hint { font-size: 13px; color: var(--ink-soft); margin: 6px 0 0; }
+
+  #bb-root .bb-stub { background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 3px; padding: 20px; margin-bottom: 18px; }
+
+  #bb-root button { font: inherit; cursor: pointer; border-radius: 2px; min-height: 44px; }
+  #bb-root .bb-btn-primary { width: 100%; background: var(--rule-strong); color: #fff; border: none; font-size: 17px; font-weight: 600; padding: 12px; margin-top: 14px; }
+  #bb-root .bb-btn-primary:active { background: var(--accent); }
+  #bb-root .bb-btn-quiet { background: transparent; border: 1px solid var(--rule); color: var(--ink); font-size: 15px; padding: 9px 14px; }
+  #bb-root .bb-btn-text { background: none; border: none; color: var(--accent); font-size: 15px; font-weight: 600; padding: 6px 0; min-height: auto; text-align: left; }
+  #bb-root .bb-btn-danger { background: none; border: none; color: var(--accent); font-size: 14px; padding: 6px 0; min-height: auto; }
+  #bb-root .bb-btn-back { background: none; border: none; color: var(--ink-soft); font-size: 15px; padding: 4px 0 18px; min-height: auto; }
+
+  #bb-root .bb-rule { border: none; border-top: 1px solid var(--rule); margin: 22px 0; }
+
+  #bb-root .bb-dotrow { display: flex; align-items: baseline; gap: 6px; }
+  #bb-root .bb-dotrow .bb-fill { flex: 1 1 auto; border-bottom: 1px dotted #B7B2A0; height: 0; position: relative; top: -4px; min-width: 12px; }
+  #bb-root .bb-dotrow .bb-num { flex: 0 0 auto; font-size: 13.5px; color: var(--ink-soft); }
+
+  #bb-root .bb-topic-card { display: block; width: 100%; text-align: left; background: var(--paper-raised); border: 1px solid var(--rule); border-left: 3px solid var(--rule-strong); border-radius: 2px; padding: 14px 16px; margin-bottom: 10px; }
+  #bb-root .bb-topic-card .bb-topic-title { font-size: 16.5px; font-weight: 600; margin: 0 0 6px; }
+  #bb-root .bb-topic-card .bb-topic-counts { font-size: 12.5px; color: var(--ink-soft); margin: 0; }
+
+  #bb-root .bb-section-label { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; color: var(--accent); margin: 0 0 10px; text-transform: uppercase; }
+  #bb-root .bb-list { margin: 0 0 22px; padding-left: 20px; }
+  #bb-root .bb-list li { margin-bottom: 8px; }
+  #bb-root .bb-empty-note { color: var(--ink-soft); font-size: 15px; }
+
+  #bb-root .bb-error { background: var(--accent-soft); border: 1px solid var(--accent); color: var(--accent); padding: 10px 12px; border-radius: 2px; font-size: 14px; margin-bottom: 14px; }
+
+  #bb-root details.bb-chapter { border: 1px solid var(--rule); border-radius: 2px; margin-bottom: 10px; background: var(--paper-raised); overflow: hidden; }
+  #bb-root details.bb-chapter > summary { list-style: none; padding: 13px 16px; cursor: pointer; font-weight: 600; font-size: 15.5px; }
+  #bb-root details.bb-chapter > summary::-webkit-details-marker { display: none; }
+  #bb-root details.bb-chapter > summary::before { content: '+ '; color: var(--accent); font-weight: 700; }
+  #bb-root details.bb-chapter[open] > summary::before { content: '– '; }
+  #bb-root .bb-chapter-body { padding: 4px 16px 18px; }
+
+  #bb-root .bb-row { display: flex; gap: 10px; }
+  #bb-root .bb-row > div { flex: 1; }
+  #bb-root .bb-field { margin-bottom: 12px; }
+
+  #bb-root details.bb-topic-edit { border-top: 1px dotted var(--rule); padding-top: 12px; margin-top: 12px; }
+  #bb-root details.bb-topic-edit > summary { list-style: none; cursor: pointer; font-size: 14.5px; font-weight: 600; }
+  #bb-root details.bb-topic-edit > summary::-webkit-details-marker { display: none; }
+  #bb-root .bb-topic-edit-body { padding: 10px 0 4px; }
+
+  #bb-root .bb-loading { padding: 40px 24px; color: var(--ink-soft); }
+  #bb-root .bb-savebar { display: flex; gap: 10px; margin-top: 10px; align-items: center; }
+
+  #bb-root .bb-notes-heading { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; color: var(--ink-soft); text-transform: uppercase; margin: 26px 0 10px; }
+  #bb-root .bb-note-card { background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 2px; padding: 14px 16px; margin-bottom: 10px; }
+  #bb-root .bb-note-text { font-size: 15px; margin: 0 0 10px; white-space: pre-wrap; }
+  #bb-root .bb-note-img { display: block; width: 100%; border-radius: 2px; margin-bottom: 10px; background: var(--paper); min-height: 40px; }
+  #bb-root .bb-yt-thumb { position: relative; display: block; width: 100%; aspect-ratio: 16/9; background-size: cover; background-position: center; background-color: var(--rule); border-radius: 2px; margin-bottom: 10px; }
+  #bb-root .bb-yt-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 46px; height: 46px; background: rgba(0,0,0,0.65); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  #bb-root .bb-note-actions { display: flex; justify-content: flex-end; }
+  #bb-root .bb-image-preview { display: block; max-width: 100%; border-radius: 2px; margin: 8px 0; }
+  #bb-root input[type="file"] { width: 100%; font-size: 14px; }
+
+  #bb-root .bb-list-editable { list-style: none; padding-left: 0; }
+  #bb-root .bb-editable-li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; border-bottom: 1px dotted var(--rule); padding: 7px 0; }
+  #bb-root .bb-editable-li span { flex: 1; }
+  #bb-root .bb-li-delete { background: none; border: none; color: var(--ink-soft); font-size: 20px; line-height: 1; padding: 0 2px; min-height: auto; cursor: pointer; }
+  #bb-root .bb-li-delete:active { color: var(--accent); }
+  #bb-root .bb-inline-add { display: flex; gap: 8px; margin: 10px 0 22px; }
+  #bb-root .bb-inline-add input { flex: 1; }
+  #bb-root .bb-inline-add button { flex: 0 0 auto; }
+</style>
+</head>
+<body>
+<div id="bb-root">
+  <div class="bb-shell">
+    <div id="bb-app" class="bb-loading">Lade Karteikasten …</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const KEY = 'buchbegleiter:data';
+
+  function cid() { return Math.random().toString(36).slice(2, 10); }
+  function linesToList(text) { return text.split('\n').map(s => s.trim()).filter(Boolean); }
+
+  function extractYoutubeId(url) {
+    const m = String(url).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function resizeImageFile(file, maxW, quality) {
+    maxW = maxW || 900;
+    quality = quality || 0.72;
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Lesefehler'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Bildfehler'));
+        img.onload = () => {
+          const scale = Math.min(1, maxW / img.width);
+          const w = Math.max(1, Math.round(img.width * scale));
+          const h = Math.max(1, Math.round(img.height * scale));
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Tries progressively smaller/more compressed versions of the same file so a
+  // borderline-large photo doesn't just fail outright — only gives up once even
+  // a small, heavily compressed version can't be stored. Tracks *where* the
+  // failure happened (decode vs. store) so the caller can give an accurate message.
+  async function saveImageWithFallback(file, noteId) {
+    const attempts = [
+      { maxW: 900, q: 0.72 },
+      { maxW: 600, q: 0.55 },
+      { maxW: 420, q: 0.4 },
+    ];
+    let lastStage = 'decode';
+    let lastErr = null;
+    for (const a of attempts) {
+      let dataUrl;
+      try {
+        dataUrl = await resizeImageFile(file, a.maxW, a.q);
+      } catch (e) {
+        lastStage = 'decode';
+        lastErr = e;
+        continue;
+      }
+      try {
+        await storageSetWithRetry(`img:${noteId}`, dataUrl, 2);
+        imageCache[`img:${noteId}`] = dataUrl;
+        return dataUrl;
+      } catch (e) {
+        lastStage = 'store';
+        lastErr = e;
+      }
+    }
+    const err = lastErr || new Error('unbekannter Fehler');
+    err.stage = lastStage;
+    throw err;
+  }
+
+  const CHAPTERS_SEED = [
+    ['1. Die USA sind die größte Gefahr für den Weltfrieden', 15, 42, [
+      'Gallup befragt 67 000 Menschen in 65 Ländern',
+      'Die USA haben nach 1945 am meisten Länder bombardiert',
+      'Eisenhower warnt vor dem militärisch-industriellen Komplex',
+      'Die US-Militärausgaben sind Weltrekord',
+      'Lockheed Martin ist der größte Rüstungskonzern der Welt',
+      'Die USA sind eine Atommacht',
+      'Die USA haben über 700 Militärstützpunkte in fremden Ländern',
+      'Die USA haben mehr als 200 000 Soldaten im Ausland stationiert',
+      'Die besetzten Länder wehren sich'
+    ]],
+    ['2. Die USA sind eine Oligarchie', 43, 58, [
+      '300 000 Superreiche lenken das Imperium',
+      'Es gibt 100 Millionen Arme in den USA',
+      'Es gibt 540 Milliardäre in den USA',
+      'Das Ende des amerikanischen Traums',
+      'Die Superreichen bestimmen die Politik',
+      'US-Wähler haben kaum Einfluss auf die Politik'
+    ]],
+    ['3. Die Indianerkriege', 59, 86, [
+      'Die europäischen Großmächte teilen Amerika unter sich auf',
+      'Die Engländer gründen 1607 Jamestown',
+      'Der Export von Tabak nach London',
+      'Die dreizehn Kolonien am Atlantik',
+      'Die Unabhängigkeitserklärung von 1776',
+      'Der Kampf gegen das britische Imperium',
+      'Der Krieg gegen Mexiko 1846',
+      'Die Vernichtung der Indianer',
+      'Das Massaker bei Wounded Knee 1890',
+      'Vier Millionen tote Indianer'
+    ]],
+    ['4. Die Ausbeutung der Sklaven', 87, 94, [
+      'Die Verschleppung von 12 Millionen Afrikanern',
+      'Bürgerkrieg und Abschaffung der Sklaverei 1865',
+      'Der Ku-Klux-Klan will die Vorherrschaft der Weißen',
+      'Martin Luther King stärkt die Bürgerrechtsbewegung'
+    ]],
+    ['5. Nordamerika ist nicht genug', 95, 112, [
+      'Die Explosion der Maine 1898',
+      'Die Eroberung von Kuba und Puerto Rico 1898',
+      'Der Putsch in Hawaii 1893',
+      'Die Eroberung der Philippinen 1898',
+      'Die Warnung von Generalmajor Smedley Butler'
+    ]],
+    ['6. Die USA und der Erste Weltkrieg', 113, 133, [
+      'Der Beginn des Ersten Weltkriegs 1914',
+      'Die Händler des Todes profitieren vom Krieg',
+      'Der Federal Reserve Act 1913',
+      'Die Versenkung der Lusitania 1915',
+      'Der Eintritt der USA in den Ersten Weltkrieg 1917',
+      'US-Kriegspropaganda gegen Deutschland',
+      'Die Reparationen und der Vertrag von Versailles 1919'
+    ]],
+    ['7. Die USA und der Zweite Weltkrieg', 134, 164, [
+      'Der Reichstagsbrand 1933',
+      'Das Prinzip Menschheitsfamilie wird verraten',
+      'Die USA beliefern Adolf Hitler mit Erdöl',
+      'Henry Ford beliefert die Wehrmacht mit Armeefahrzeugen',
+      'Die Wiederwahl von Präsident Roosevelt 1940',
+      'Die USA unterbrechen die Erdöllieferungen an Japan 1941',
+      'Die USA überwachen den Funkverkehr der Japaner',
+      'Der Angriff von Japan auf Pearl Harbor 1941',
+      'Der US-Kongress erklärt Japan und Deutschland den Krieg',
+      'Admiral Kimmel und Generalleutnant Short werden entlassen',
+      'Die andauernde Debatte über Pearl Harbor',
+      'Die USA werfen Atombomben auf Japan',
+      'Die USA eröffnen die Zweite Front erst 1944'
+    ]],
+    ['8. Verdeckte Kriegsführung', 165, 186, [
+      'Die USA gründen den Nationalen Sicherheitsrat 1947',
+      'Die CIA manipuliert die Wahlen in Italien 1948',
+      'Die CIA stürzt die Regierung im Iran 1953',
+      'Die CIA stürzt die Regierung in Guatemala 1954',
+      'Die CIA ermordet Premierminister Lumumba im Kongo 1961',
+      'Die Ermordung von Trujillo in der Dominikanischen Republik 1961',
+      'Die Ermordung von Präsident Diem in Vietnam 1963',
+      'Die Ermordung von General Schneider in Chile 1970',
+      'Che Guevara wird in Bolivien erschossen 1967',
+      'Die Mordanschläge der CIA auf Fidel Castro 1961',
+      'CIA-Direktor Allen Dulles lenkt die Mörder',
+      'Der illegale Angriff der CIA auf Kuba 1961',
+      'Kennedy feuert CIA-Direktor Allen Dulles 1961'
+    ]],
+    ['9. Die Ermordung von Präsident Kennedy', 187, 206, [
+      'Tatort Dallas, 22. November 1963',
+      'Das Märchen vom verrückten Einzeltäter Lee Harvey Oswald',
+      'Der Bericht der Warren-Kommission 1964',
+      'Jim Garrison rollt den Fall 1967 neu auf',
+      'Die CIA behauptet, es gab keine Verschwörung',
+      'Die Rache von CIA-Direktor Allen Dulles'
+    ]],
+    ['10. Der Vietnamkrieg', 207, 230, [
+      'Frankreich verliert seine Kolonie Indochina 1954',
+      'Vietnam wird in zwei Teile gespalten',
+      'Die Lüge vom Tonkin-Zwischenfall 1964',
+      'Die USA werfen Napalm auf Babys und Buddhisten',
+      'Die Friedensbewegung und das Kent-State-Massaker 1970',
+      'Die USA stürzen Präsident Sukarno in Indonesien 1965',
+      'Das Massaker von My Lai wird aufgedeckt',
+      'Der geheime Krieg gegen Kambodscha und Laos',
+      'Die Briten und die USA bewaffnen die Roten Khmer in Thailand'
+    ]],
+    ['11. Die Iran-Contra-Affäre', 231, 246, [
+      'Der geheime Krieg der USA gegen Nicaragua 1981',
+      'Der Kongress verbietet einen Putsch in Nicaragua',
+      'Der NSC eröffnet ein geheimes Bankkonto in der Schweiz',
+      'Die CIA und der Kokainhandel',
+      'Saddam Hussein überfällt Iran und setzt Giftgas ein',
+      'Die USA verkaufen trotz Embargo Waffen an den Iran',
+      'Die Iran-Contra-Affäre erschüttert das Vertrauen der Bevölkerung',
+      'Die Verschwörer müssen nicht ins Gefängnis',
+      'Die Brutkastenlüge und der Krieg gegen Kuwait 1991'
+    ]],
+    ['12. Die Anschläge vom 11. September', 247, 268, [
+      'Ein neues Pearl Harbor',
+      'Die gescheiterte Untersuchung von Kean und Hamilton 2004',
+      'Totalausfall der US-Luftabwehr',
+      'Millionengewinne mit Put-Optionen',
+      'Die Sprengung von WTC7',
+      'Im Staub der Zwillingstürme wird Sprengstoff gefunden',
+      'Die Türme waren mit Asbest belastet'
+    ]],
+    ['13. Der sogenannte »Krieg gegen den Terror«', 269, 284, [
+      'Der Angriff auf Afghanistan 2001',
+      'Kampfdrohnen revolutionieren die Kriegsführung',
+      'Wie Leitmedien Kriegspropaganda verbreiten',
+      'Die USA produzieren die größte Show der Welt',
+      'Alternative Medien stärken die Friedensbewegung'
+    ]],
+    ['14. Das digitale Imperium', 285, 310, [
+      'Der Fichenskandal in der Schweiz 1990',
+      'Die Überwachung der Bürger in China',
+      'Die Überwachung der Bürger in den USA',
+      'Das Internet revolutioniert die Welt 1994',
+      'Google verdiente 30 Milliarden Dollar in 2018',
+      'Facebook verdrängt auf Papier gedruckte Zeitungen',
+      'Facebook und die Wahl von Donald Trump 2016',
+      'Der Cambridge-Analytica-Skandal wird aufgedeckt',
+      'Cambridge Analytica und der Brexit 2016',
+      'Mikrotargeting beeinflusst Abstimmungen in der Schweiz',
+      'Die Gründung des Online-Lexikons Wikipedia 2001',
+      'Die dunkle Seite der Wikipedia'
+    ]],
+    ['15. Der Kampf um Eurasien', 311, 334, [
+      '»Teile und herrsche«',
+      'Russland ist nur eine Regionalmacht',
+      'Die NATO-Osterweiterung verärgert Russland',
+      'Der Putsch der USA in der Ukraine 2014',
+      'Die USA bombardieren Syrien 2014',
+      'Die Demütigung von China im Opiumkrieg 1839',
+      'China hat die größte Armee der Welt',
+      'China hat die zweitgrößte Volkswirtschaft der Welt',
+      'Die neue Seidenstraße 2013'
+    ]],
+    ['16. Fazit', 335, 401, []]
+  ];
+
+  function defaultData() {
+    return {
+      bookTitle: 'Imperium USA',
+      bookSubtitle: 'Die skrupellose Weltmacht — Daniele Ganser',
+      chapters: CHAPTERS_SEED.map(([name, startPage, endPage, topics]) => ({
+        id: cid(), name, startPage, endPage,
+        topics: topics.map(title => ({ id: cid(), title, fragen: [], infos: [], quellen: [] }))
+      }))
+    };
+  }
+
+  let state = {
+    data: null,
+    screen: 'home',
+    currentChapterId: null,
+    currentTopicId: null,
+    homeError: null,
+    manageError: null,
+  };
+  let pendingImageDataUrl = null;
+  let pendingImageFile = null;
+  const imageCache = {};
+
+  const app = document.getElementById('bb-app');
+
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // Storage adapter. Persistent artifact storage (window.storage) only works
+  // once an artifact is *published* — inside a conversation the bridge exists
+  // but every call fails. So we probe it at startup instead of trusting it,
+  // then fall back to the browser's localStorage (self-hosted use) or memory,
+  // and always show which backend is active.
+  const claudeBackend = {
+    kind: 'claude',
+    label: 'Claude-Speicher (dauerhaft)',
+    get: async k => { const r = await window.storage.get(k, false); return r ? r.value : null; },
+    set: async (k, v) => { const r = await window.storage.set(k, v, false); if (!r) throw new Error('kein Ergebnis vom Speicher'); },
+    del: async k => { try { await window.storage.delete(k, false); } catch (e) { /* already gone */ } },
+  };
+  const localBackend = {
+    kind: 'local',
+    label: 'Browser-Speicher (dauerhaft auf diesem Gerät)',
+    get: async k => window.localStorage.getItem(k),
+    set: async (k, v) => { window.localStorage.setItem(k, v); },
+    del: async k => { window.localStorage.removeItem(k); },
+  };
+  const mem = {};
+  const memoryBackend = {
+    kind: 'memory',
+    label: 'nur diese Sitzung (nicht dauerhaft)',
+    get: async k => (Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null),
+    set: async (k, v) => { mem[k] = v; },
+    del: async k => { delete mem[k]; },
+  };
+  let store = memoryBackend;
+  let storeNote = '';
+
+  async function initStore() {
+    if (window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function') {
+      try {
+        const r = await window.storage.set('__bb_probe__', '1', false);
+        if (!r) throw new Error('kein Ergebnis vom Speicher');
+        try { await window.storage.delete('__bb_probe__', false); } catch (e) { /* ignore */ }
+        store = claudeBackend;
+        return;
+      } catch (e) {
+        storeNote = 'Der Claude-Speicher ist hier gemeldet, aber nicht nutzbar (' + errText(e) + '). Laut Anthropic funktioniert er erst, wenn das Artefakt veröffentlicht ist.';
+      }
+    }
+    try {
+      window.localStorage.setItem('__bb_probe__', '1');
+      window.localStorage.removeItem('__bb_probe__');
+      store = localBackend;
+      return;
+    } catch (e) { /* sandboxed: no localStorage here */ }
+    store = memoryBackend;
+  }
+
+  function errText(e) {
+    if (!e) return 'unbekannter Fehler';
+    if (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message))) return 'Speicher voll';
+    return e.message || String(e);
+  }
+
+  // Retries only make sense for the network-backed Claude storage; for
+  // localStorage/memory a failure is deterministic, so try once.
+  function attemptsFor(n) { return store.kind === 'claude' ? n : 1; }
+
+  async function storageSetWithRetry(key, value, maxAttempts) {
+    maxAttempts = attemptsFor(maxAttempts || 3);
+    let lastErr = null;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        await store.set(key, value);
+        return true;
+      } catch (e) {
+        lastErr = e;
+      }
+      if (attempt < maxAttempts - 1) await wait(400 * (attempt + 1));
+    }
+    throw lastErr || new Error('unbekannter Fehler');
+  }
+
+  async function storageGetWithRetry(key, maxAttempts) {
+    maxAttempts = attemptsFor(maxAttempts || 3);
+    let lastErr = null;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        return await store.get(key);
+      } catch (e) {
+        lastErr = e;
+      }
+      if (attempt < maxAttempts - 1) await wait(400 * (attempt + 1));
+    }
+    throw lastErr || new Error('unbekannter Fehler');
+  }
+
+  async function load() {
+    await initStore();
+    try {
+      const raw = await storageGetWithRetry(KEY, 3);
+      state.data = raw ? JSON.parse(raw) : defaultData();
+      if (!raw) await persist();
+    } catch (e) {
+      state.data = defaultData();
+    }
+    render();
+  }
+
+  async function persist() {
+    try {
+      await storageSetWithRetry(KEY, JSON.stringify(state.data), 3);
+      state.manageError = null;
+      return true;
+    } catch (e) {
+      state.manageError = 'Speichern hat nicht geklappt (' + errText(e) + '). Speicherart: ' + store.label + '.';
+      return false;
+    }
+  }
+
+  function storageStatusHtml() {
+    if (store.kind === 'memory') {
+      return `<div class="bb-error">In dieser Ansicht kann nichts dauerhaft gespeichert werden — Änderungen gehen beim Schließen verloren. ${esc(storeNote)} Sichere Änderungen unter "Verwalten" per Export, oder nutze die Datei selbst gehostet im Browser (dann speichert sie dort).</div>`;
+    }
+    return `<p class="bb-hint">Speicherart: ${esc(store.label)}</p>`;
+  }
+
+  function findChapter(page) {
+    return state.data.chapters.find(c => page >= Number(c.startPage) && page <= Number(c.endPage));
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function header() {
+    return `
+      <div class="bb-header">
+        <p class="bb-kicker">Karteikasten fürs Buch</p>
+        <h1>${esc(state.data.bookTitle)}</h1>
+        ${state.data.bookSubtitle ? `<p class="bb-subtitle">${esc(state.data.bookSubtitle)}</p>` : ''}
+      </div>`;
+  }
+
+  function renderHome() {
+    app.innerHTML = `
+      ${header()}
+      <div class="bb-body">
+        <div class="bb-stub">
+          <label class="bb-field-label" for="bb-page-input">Auf welcher Seite bist du gerade?</label>
+          <input id="bb-page-input" type="number" inputmode="numeric" placeholder="z. B. 100" />
+          ${state.homeError ? `<p class="bb-hint" style="color: var(--accent);">${esc(state.homeError)}</p>` : ''}
+          <button class="bb-btn-primary" id="bb-go">Kapitel anzeigen</button>
+        </div>
+        <button class="bb-btn-text" id="bb-manage-link">Karteikarten verwalten</button>
+        <p class="bb-hint">Der QR-Code vorn im Buch führt genau hierher — dieser Bildschirm ist, was du nach dem Scannen siehst.</p>
+        ${storageStatusHtml()}
+      </div>`;
+
+    document.getElementById('bb-go').addEventListener('click', onGo);
+    document.getElementById('bb-page-input').addEventListener('keydown', e => { if (e.key === 'Enter') onGo(); });
+    document.getElementById('bb-manage-link').addEventListener('click', () => { state.screen = 'manage'; render(); });
+  }
+
+  function onGo() {
+    const val = document.getElementById('bb-page-input').value;
+    const page = parseInt(val, 10);
+    if (!val || isNaN(page)) { state.homeError = 'Bitte eine Seitenzahl eingeben.'; render(); return; }
+    const chapter = findChapter(page);
+    if (!chapter) { state.homeError = `Für Seite ${page} ist noch kein Kapitel hinterlegt.`; render(); return; }
+    state.homeError = null;
+    state.currentChapterId = chapter.id;
+    state.screen = 'chapter';
+    render();
+  }
+
+  function renderChapter() {
+    const chapter = state.data.chapters.find(c => c.id === state.currentChapterId);
+    if (!chapter) { state.screen = 'home'; render(); return; }
+
+    const topicsHtml = chapter.topics.length
+      ? chapter.topics.map(t => `
+          <button class="bb-topic-card" data-topic="${t.id}">
+            <p class="bb-topic-title">${esc(t.title || 'Ohne Titel')}</p>
+            <p class="bb-topic-counts">${t.fragen.length} Fragen, ${t.infos.length} Infos, ${t.quellen.length} Quellen${(t.notes && t.notes.length) ? ', ' + t.notes.length + ' Notizen' : ''}</p>
+          </button>`).join('')
+      : `<p class="bb-empty-note">Für dieses Kapitel sind noch keine Themen angelegt.</p>`;
+
+    app.innerHTML = `
+      <div class="bb-body" style="padding-top: 20px;">
+        <button class="bb-btn-back" id="bb-back-home">‹ Neue Seite</button>
+        <h2>${esc(chapter.name)}</h2>
+        <p class="bb-meta">Seite ${chapter.startPage}–${chapter.endPage}</p>
+        ${topicsHtml}
+      </div>`;
+
+    document.getElementById('bb-back-home').addEventListener('click', () => { state.screen = 'home'; render(); });
+    app.querySelectorAll('[data-topic]').forEach(btn => {
+      btn.addEventListener('click', () => { state.currentTopicId = btn.getAttribute('data-topic'); state.screen = 'topic'; render(); });
+    });
+  }
+
+  function loadNoteImages() {
+    app.querySelectorAll('.bb-note-img[data-img-key]').forEach(async img => {
+      const key = img.getAttribute('data-img-key');
+      if (imageCache[key]) { img.src = imageCache[key]; return; }
+      try {
+        const value = await storageGetWithRetry(key, 2);
+        if (value) {
+          imageCache[key] = value;
+          img.src = value;
+        } else {
+          showImageFallback(img);
+        }
+      } catch (e) {
+        showImageFallback(img);
+      }
+    });
+  }
+
+  function showImageFallback(img) {
+    const fallback = document.createElement('p');
+    fallback.className = 'bb-empty-note';
+    fallback.textContent = 'Bild konnte nicht geladen werden.';
+    img.replaceWith(fallback);
+  }
+
+  function renderNoteAdd() {
+    const chapter = state.data.chapters.find(c => c.id === state.currentChapterId);
+    const topic = chapter && chapter.topics.find(t => t.id === state.currentTopicId);
+    if (!chapter || !topic) { state.screen = 'chapter'; render(); return; }
+
+    app.innerHTML = `
+      <div class="bb-body" style="padding-top: 20px;">
+        <button class="bb-btn-back" id="bb-note-back">‹ ${esc(topic.title || 'Thema')}</button>
+        <h2>Notiz hinzufügen</h2>
+        <p class="bb-meta">Text, ein Bild und/oder ein YouTube-Link — alles optional, mindestens eins ausfüllen</p>
+        <div id="bb-note-error"></div>
+        <div class="bb-field">
+          <label class="bb-field-label" for="bb-note-text">Text</label>
+          <textarea id="bb-note-text" placeholder="Eigene Notiz …"></textarea>
+        </div>
+        <div class="bb-field">
+          <label class="bb-field-label" for="bb-note-file">Bild</label>
+          <input type="file" accept="image/*" id="bb-note-file" />
+          <div id="bb-note-preview"></div>
+        </div>
+        <div class="bb-field">
+          <label class="bb-field-label" for="bb-note-youtube">YouTube-Link</label>
+          <input type="text" id="bb-note-youtube" placeholder="https://youtube.com/watch?v=…" />
+        </div>
+        <button class="bb-btn-primary" id="bb-note-save">Notiz speichern</button>
+      </div>`;
+
+    document.getElementById('bb-note-back').addEventListener('click', () => {
+      pendingImageDataUrl = null;
+      pendingImageFile = null;
+      state.screen = 'topic';
+      render();
+    });
+
+    document.getElementById('bb-note-file').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        pendingImageFile = file;
+        pendingImageDataUrl = await resizeImageFile(file);
+        document.getElementById('bb-note-preview').innerHTML = `<img class="bb-image-preview" src="${pendingImageDataUrl}" alt="" /><button class="bb-btn-text" id="bb-note-image-remove" type="button">Bild entfernen</button>`;
+        document.getElementById('bb-note-image-remove').addEventListener('click', () => {
+          pendingImageDataUrl = null;
+          pendingImageFile = null;
+          document.getElementById('bb-note-preview').innerHTML = '';
+          document.getElementById('bb-note-file').value = '';
+        });
+      } catch (err) {
+        pendingImageFile = null;
+        document.getElementById('bb-note-error').innerHTML = `<div class="bb-error">Bild konnte nicht gelesen werden. Bitte ein anderes Bild versuchen.</div>`;
+      }
+    });
+
+    document.getElementById('bb-note-save').addEventListener('click', async () => {
+      const text = document.getElementById('bb-note-text').value.trim();
+      const youtubeRaw = document.getElementById('bb-note-youtube').value.trim();
+      let youtubeId = null;
+      if (youtubeRaw) {
+        youtubeId = extractYoutubeId(youtubeRaw);
+        if (!youtubeId) {
+          document.getElementById('bb-note-error').innerHTML = `<div class="bb-error">Der YouTube-Link wurde nicht erkannt. Bitte im Format youtube.com/watch?v=… oder youtu.be/… einfügen.</div>`;
+          return;
+        }
+      }
+      if (!text && !pendingImageDataUrl && !youtubeId) {
+        document.getElementById('bb-note-error').innerHTML = `<div class="bb-error">Bitte mindestens Text, ein Bild oder einen YouTube-Link angeben.</div>`;
+        return;
+      }
+
+      const saveBtn = document.getElementById('bb-note-save');
+      const noteId = cid();
+      let hasImage = false;
+      if (pendingImageFile) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Bild wird gespeichert …';
+        try {
+          await saveImageWithFallback(pendingImageFile, noteId);
+          hasImage = true;
+        } catch (e) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Notiz speichern';
+          const msg = (e && e.stage === 'decode')
+            ? 'Dieses Bildformat konnte im Browser nicht gelesen werden (bei iPhone-Fotos hilft es oft, stattdessen einen Screenshot des Bildes zu wählen). Text und Link bleiben erhalten.'
+            : 'Das Bild konnte auch in kleineren Größen nicht abgelegt werden (' + errText(e) + '; Speicherart: ' + store.label + '). Text und Link bleiben erhalten.';
+          document.getElementById('bb-note-error').innerHTML = `<div class="bb-error">${msg}</div>`;
+          return;
+        }
+      }
+      const note = { id: noteId, text: text || '', youtubeId: youtubeId || null, hasImage };
+      if (!topic.notes) topic.notes = [];
+      topic.notes.push(note);
+      const ok = await persist();
+      if (!ok) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Notiz speichern';
+        topic.notes.pop();
+        if (hasImage) { delete imageCache[`img:${noteId}`]; store.del(`img:${noteId}`); }
+        document.getElementById('bb-note-error').innerHTML = `<div class="bb-error">${esc(state.manageError || 'Notiz konnte nicht gespeichert werden.')}</div>`;
+        return;
+      }
+      pendingImageDataUrl = null;
+      pendingImageFile = null;
+      state.screen = 'topic';
+      render();
+    });
+  }
+
+  function renderTopic() {
+    const chapter = state.data.chapters.find(c => c.id === state.currentChapterId);
+    const topic = chapter && chapter.topics.find(t => t.id === state.currentTopicId);
+    if (!chapter || !topic) { state.screen = 'chapter'; render(); return; }
+    if (!topic.notes) topic.notes = [];
+
+    function section(label, items) {
+      if (!items.length) return '';
+      return `<p class="bb-section-label">${label}</p><ul class="bb-list">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`;
+    }
+
+    const infosHtml = topic.infos.map((info, idx) => `
+      <li class="bb-editable-li">
+        <span>${esc(info)}</span>
+        <button class="bb-li-delete" data-info-del="${idx}" aria-label="Info löschen">×</button>
+      </li>`).join('');
+
+    const notesHtml = topic.notes.map(n => `
+      <div class="bb-note-card">
+        ${n.hasImage ? `<img class="bb-note-img" data-img-key="img:${n.id}" alt="" />` : ''}
+        ${n.youtubeId ? `
+          <a class="bb-yt-thumb" style="background-image:url('https://img.youtube.com/vi/${n.youtubeId}/hqdefault.jpg')" href="https://www.youtube.com/watch?v=${n.youtubeId}" target="_blank" rel="noopener">
+            <span class="bb-yt-play">►</span>
+          </a>` : ''}
+        ${n.text ? `<p class="bb-note-text">${esc(n.text)}</p>` : ''}
+        <div class="bb-note-actions"><button class="bb-btn-danger bb-note-delete" data-note-del="${n.id}">Notiz löschen</button></div>
+      </div>`).join('');
+
+    app.innerHTML = `
+      <div class="bb-body" style="padding-top: 20px;">
+        <button class="bb-btn-back" id="bb-back-chapter">‹ ${esc(chapter.name)}</button>
+        <h2>${esc(topic.title || 'Ohne Titel')}</h2>
+        <p class="bb-meta">Seite ${chapter.startPage}–${chapter.endPage}</p>
+        <div id="bb-topic-error"></div>
+
+        ${section('Fragen', topic.fragen)}
+
+        <p class="bb-section-label">Infos</p>
+        ${topic.infos.length ? `<ul class="bb-list bb-list-editable">${infosHtml}</ul>` : '<p class="bb-empty-note">Noch keine Infos.</p>'}
+        <div class="bb-inline-add">
+          <input type="text" id="bb-info-new" placeholder="Neue Info …" />
+          <button class="bb-btn-quiet" id="bb-info-add">Hinzufügen</button>
+        </div>
+
+        <p class="bb-section-label" style="margin-top: 26px;">Eigene Notizen</p>
+        ${notesHtml || '<p class="bb-empty-note">Noch keine eigenen Notizen.</p>'}
+        <button class="bb-btn-quiet" id="bb-note-add-open">+ Notiz hinzufügen (Text, Bild, YouTube)</button>
+
+        ${section('Quellen', topic.quellen)}
+      </div>`;
+
+    function showTopicError(msg) {
+      document.getElementById('bb-topic-error').innerHTML = `<div class="bb-error">${esc(msg)}</div>`;
+    }
+
+    document.getElementById('bb-back-chapter').addEventListener('click', () => { state.screen = 'chapter'; render(); });
+
+    async function addInfo() {
+      const input = document.getElementById('bb-info-new');
+      const val = input.value.trim();
+      if (!val) return;
+      topic.infos.push(val);
+      const ok = await persist();
+      if (!ok) { topic.infos.pop(); showTopicError(state.manageError || 'Info konnte nicht gespeichert werden.'); return; }
+      render();
+    }
+    document.getElementById('bb-info-add').addEventListener('click', addInfo);
+    document.getElementById('bb-info-new').addEventListener('keydown', e => { if (e.key === 'Enter') addInfo(); });
+    app.querySelectorAll('[data-info-del]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.getAttribute('data-info-del'), 10);
+        const removed = topic.infos[idx];
+        topic.infos.splice(idx, 1);
+        const ok = await persist();
+        if (!ok) { topic.infos.splice(idx, 0, removed); showTopicError(state.manageError || 'Info konnte nicht gelöscht werden.'); return; }
+        render();
+      });
+    });
+
+    document.getElementById('bb-note-add-open').addEventListener('click', () => {
+      pendingImageDataUrl = null;
+      pendingImageFile = null;
+      state.screen = 'note-add';
+      render();
+    });
+    app.querySelectorAll('[data-note-del]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const noteId = btn.getAttribute('data-note-del');
+        if (!confirm('Diese Notiz wirklich löschen?')) return;
+        const note = topic.notes.find(n => n.id === noteId);
+        const idx = topic.notes.indexOf(note);
+        topic.notes = topic.notes.filter(n => n.id !== noteId);
+        const ok = await persist();
+        if (!ok) { topic.notes.splice(idx, 0, note); showTopicError(state.manageError || 'Notiz konnte nicht gelöscht werden.'); return; }
+        if (note && note.hasImage) {
+          delete imageCache[`img:${noteId}`];
+          await store.del(`img:${noteId}`);
+        }
+        render();
+      });
+    });
+
+    loadNoteImages();
+  }
+
+  function renderManage() {
+    const chaptersHtml = state.data.chapters.map(chapterHtml).join('');
+    app.innerHTML = `
+      <div class="bb-body" style="padding-top: 20px;">
+        <button class="bb-btn-back" id="bb-back-home2">‹ Zur Startseite</button>
+        <h2>Karteikasten verwalten</h2>
+        ${storageStatusHtml()}
+        <div class="bb-field">
+          <label class="bb-field-label" for="bb-title-input">Buchtitel</label>
+          <input id="bb-title-input" type="text" value="${esc(state.data.bookTitle)}" />
+        </div>
+        ${state.manageError ? `<div class="bb-error">${esc(state.manageError)}</div>` : ''}
+        <hr class="bb-rule" />
+        ${chaptersHtml || '<p class="bb-empty-note">Noch keine Kapitel angelegt.</p>'}
+        <button class="bb-btn-quiet" id="bb-add-chapter">+ Kapitel hinzufügen</button>
+        <hr class="bb-rule" />
+        <p class="bb-section-label">Sichern &amp; übertragen</p>
+        <p class="bb-hint" style="margin: 0 0 10px;">Export erzeugt einen Text mit allen Kapiteln, Notizen und Bildern. Den kannst du kopieren und in einer anderen Ansicht (z. B. im Browser) importieren.</p>
+        <div class="bb-savebar">
+          <button class="bb-btn-quiet" id="bb-export">Daten exportieren</button>
+          <button class="bb-btn-quiet" id="bb-import-open">Daten importieren</button>
+        </div>
+        <div id="bb-transfer"></div>
+        <hr class="bb-rule" />
+        <p class="bb-section-label">Zugriffsschutz</p>
+        <div class="bb-savebar" style="margin-bottom: 22px;">
+          <button class="bb-btn-quiet" id="bb-lock">Jetzt sperren</button>
+          <button class="bb-btn-quiet" id="bb-change-pw">Passwort ändern</button>
+        </div>
+        <div id="bb-pw-change"></div>
+        <hr class="bb-rule" />
+        <button class="bb-btn-danger" id="bb-reset">Alle Daten zurücksetzen</button>
+      </div>`;
+
+    document.getElementById('bb-lock').addEventListener('click', () => {
+      if (!getLocal(PW_HASH_KEY)) { alert('Es ist noch kein Passwort festgelegt.'); return; }
+      lockApp();
+    });
+    document.getElementById('bb-change-pw').addEventListener('click', () => {
+      const box = document.getElementById('bb-pw-change');
+      const hasPw = !!getLocal(PW_HASH_KEY);
+      box.innerHTML = `
+        ${hasPw ? '<div class="bb-field"><input type="password" id="bb-pw-old" placeholder="Aktuelles Passwort" /></div>' : ''}
+        <div class="bb-field"><input type="password" id="bb-pw-new" placeholder="Neues Passwort" /></div>
+        <div class="bb-field"><input type="password" id="bb-pw-new2" placeholder="Neues Passwort wiederholen" /></div>
+        <div id="bb-pw-change-error"></div>
+        <button class="bb-btn-quiet" id="bb-pw-change-save">Speichern</button>`;
+      document.getElementById('bb-pw-change-save').addEventListener('click', async () => {
+        const errBox = document.getElementById('bb-pw-change-error');
+        if (hasPw) {
+          const old = document.getElementById('bb-pw-old').value;
+          if ((await sha256Hex(old)) !== getLocal(PW_HASH_KEY)) { errBox.innerHTML = '<div class="bb-error">Aktuelles Passwort ist falsch.</div>'; return; }
+        }
+        const n1 = document.getElementById('bb-pw-new').value;
+        const n2 = document.getElementById('bb-pw-new2').value;
+        if (n1.length < 4) { errBox.innerHTML = '<div class="bb-error">Mindestens 4 Zeichen.</div>'; return; }
+        if (n1 !== n2) { errBox.innerHTML = '<div class="bb-error">Passwörter stimmen nicht überein.</div>'; return; }
+        setLocal(PW_HASH_KEY, await sha256Hex(n1));
+        box.innerHTML = '<p class="bb-hint">Passwort aktualisiert.</p>';
+      });
+    });
+    document.getElementById('bb-back-home2').addEventListener('click', () => { state.screen = 'home'; render(); });
+    document.getElementById('bb-title-input').addEventListener('blur', async e => {
+      state.data.bookTitle = e.target.value || 'Mein Buch';
+      await persist();
+    });
+    document.getElementById('bb-add-chapter').addEventListener('click', async () => {
+      state.data.chapters.push({ id: cid(), name: 'Neues Kapitel', startPage: 1, endPage: 1, topics: [] });
+      await persist();
+      render();
+    });
+    document.getElementById('bb-reset').addEventListener('click', async () => {
+      if (!confirm('Wirklich alle Kapitel und Themen löschen und die Ganser-Vorlage neu laden?')) return;
+      const imageKeys = [];
+      state.data.chapters.forEach(c => c.topics.forEach(t => (t.notes || []).forEach(n => { if (n.hasImage) imageKeys.push(`img:${n.id}`); })));
+      state.data = defaultData();
+      await persist();
+      imageKeys.forEach(k => { delete imageCache[k]; store.del(k); });
+      render();
+    });
+
+    document.getElementById('bb-export').addEventListener('click', async () => {
+      const box = document.getElementById('bb-transfer');
+      box.innerHTML = '<p class="bb-hint">Export wird erstellt …</p>';
+      const images = {};
+      const keys = [];
+      state.data.chapters.forEach(c => c.topics.forEach(t => (t.notes || []).forEach(n => { if (n.hasImage) keys.push(`img:${n.id}`); })));
+      for (const k of keys) {
+        try {
+          const v = imageCache[k] || await store.get(k);
+          if (v) images[k] = v;
+        } catch (e) { /* skip missing image */ }
+      }
+      const payload = JSON.stringify({ app: 'buchbegleiter', version: 1, data: state.data, images });
+      box.innerHTML = `
+        <textarea id="bb-export-text" readonly style="min-height: 120px; font-size: 12px;"></textarea>
+        <div class="bb-savebar">
+          <button class="bb-btn-quiet" id="bb-copy">In Zwischenablage kopieren</button>
+          <span class="bb-hint" id="bb-copy-state">${Math.round(payload.length / 1024)} KB</span>
+        </div>`;
+      const ta = document.getElementById('bb-export-text');
+      ta.value = payload;
+      document.getElementById('bb-copy').addEventListener('click', async () => {
+        const st = document.getElementById('bb-copy-state');
+        try {
+          await navigator.clipboard.writeText(payload);
+          st.textContent = 'Kopiert.';
+        } catch (e) {
+          ta.focus(); ta.select();
+          st.textContent = 'Text ist markiert — jetzt manuell kopieren.';
+        }
+      });
+    });
+
+    document.getElementById('bb-import-open').addEventListener('click', () => {
+      const box = document.getElementById('bb-transfer');
+      box.innerHTML = `
+        <textarea id="bb-import-text" placeholder="Exportierten Text hier einfügen …" style="min-height: 120px; font-size: 12px;"></textarea>
+        <div class="bb-savebar">
+          <button class="bb-btn-quiet" id="bb-import">Importieren (ersetzt alles)</button>
+        </div>
+        <div id="bb-import-error"></div>`;
+      document.getElementById('bb-import').addEventListener('click', async () => {
+        const errBox = document.getElementById('bb-import-error');
+        let parsed;
+        try {
+          parsed = JSON.parse(document.getElementById('bb-import-text').value.trim());
+        } catch (e) {
+          errBox.innerHTML = '<div class="bb-error">Das ist kein gültiger Export-Text.</div>';
+          return;
+        }
+        const data = parsed && parsed.data && Array.isArray(parsed.data.chapters) ? parsed.data
+                   : (parsed && Array.isArray(parsed.chapters) ? parsed : null);
+        if (!data) {
+          errBox.innerHTML = '<div class="bb-error">Im Text fehlen die Kapitel — ist das wirklich ein Export aus dieser App?</div>';
+          return;
+        }
+        if (!confirm('Alle aktuellen Kapitel, Themen und Notizen durch den Import ersetzen?')) return;
+        state.data = data;
+        const ok = await persist();
+        if (!ok) { errBox.innerHTML = `<div class="bb-error">${esc(state.manageError || 'Import konnte nicht gespeichert werden.')}</div>`; return; }
+        const images = (parsed && parsed.images) || {};
+        let failed = 0;
+        for (const k of Object.keys(images)) {
+          try { await storageSetWithRetry(k, images[k], 2); imageCache[k] = images[k]; } catch (e) { failed++; }
+        }
+        if (failed) alert(`${failed} Bild(er) konnten nicht gespeichert werden (${store.label}).`);
+        render();
+      });
+    });
+
+    wireChapterEvents();
+  }
+
+  function chapterHtml(chapter) {
+    const topicsHtml = chapter.topics.map(t => topicEditHtml(chapter.id, t)).join('');
+    return `
+      <details class="bb-chapter" data-chapter="${chapter.id}">
+        <summary>
+          <span class="bb-dotrow"><span>${esc(chapter.name)}</span><span class="bb-fill"></span><span class="bb-num">${chapter.startPage}–${chapter.endPage}</span></span>
+        </summary>
+        <div class="bb-chapter-body">
+          <div class="bb-field">
+            <label class="bb-field-label">Kapitelname</label>
+            <input type="text" class="bb-ch-name" value="${esc(chapter.name)}" />
+          </div>
+          <div class="bb-row">
+            <div class="bb-field"><label class="bb-field-label">Startseite</label><input type="number" class="bb-ch-start" value="${chapter.startPage}" /></div>
+            <div class="bb-field"><label class="bb-field-label">Endseite</label><input type="number" class="bb-ch-end" value="${chapter.endPage}" /></div>
+          </div>
+          <div class="bb-savebar">
+            <button class="bb-btn-quiet bb-ch-save">Kapitel speichern</button>
+            <button class="bb-btn-danger bb-ch-delete">Kapitel löschen</button>
+          </div>
+          <hr class="bb-rule" />
+          ${topicsHtml}
+          <button class="bb-btn-quiet bb-topic-add" style="margin-top: 10px;">+ Thema hinzufügen</button>
+        </div>
+      </details>`;
+  }
+
+  function topicEditHtml(chapterId, topic) {
+    return `
+      <details class="bb-topic-edit" data-topic="${topic.id}">
+        <summary>${esc(topic.title || 'Ohne Titel')}</summary>
+        <div class="bb-topic-edit-body">
+          <div class="bb-field"><label class="bb-field-label">Titel des Themas</label><input type="text" class="bb-t-title" value="${esc(topic.title)}" /></div>
+          <div class="bb-field"><label class="bb-field-label">Fragen (eine pro Zeile)</label><textarea class="bb-t-fragen">${esc(topic.fragen.join('\n'))}</textarea></div>
+          <div class="bb-field"><label class="bb-field-label">Infos (eine pro Zeile)</label><textarea class="bb-t-infos">${esc(topic.infos.join('\n'))}</textarea></div>
+          <div class="bb-field"><label class="bb-field-label">Quellen (eine pro Zeile)</label><textarea class="bb-t-quellen">${esc(topic.quellen.join('\n'))}</textarea></div>
+          <div class="bb-savebar">
+            <button class="bb-btn-quiet bb-t-save">Thema speichern</button>
+            <button class="bb-btn-danger bb-t-delete">Thema löschen</button>
+          </div>
+        </div>
+      </details>`;
+  }
+
+  function wireChapterEvents() {
+    app.querySelectorAll('details.bb-chapter').forEach(det => {
+      const chapterId = det.getAttribute('data-chapter');
+      const chapter = state.data.chapters.find(c => c.id === chapterId);
+
+      det.querySelector('.bb-ch-save').addEventListener('click', async () => {
+        chapter.name = det.querySelector('.bb-ch-name').value || 'Kapitel';
+        chapter.startPage = parseInt(det.querySelector('.bb-ch-start').value, 10) || 1;
+        chapter.endPage = parseInt(det.querySelector('.bb-ch-end').value, 10) || chapter.startPage;
+        await persist();
+        render();
+        reopen(chapterId);
+      });
+
+      det.querySelector('.bb-ch-delete').addEventListener('click', async () => {
+        if (!confirm(`"${chapter.name}" wirklich löschen?`)) return;
+        const imageKeys = [];
+        chapter.topics.forEach(t => (t.notes || []).forEach(n => { if (n.hasImage) imageKeys.push(`img:${n.id}`); }));
+        state.data.chapters = state.data.chapters.filter(c => c.id !== chapterId);
+        await persist();
+        imageKeys.forEach(k => { delete imageCache[k]; store.del(k); });
+        render();
+      });
+
+      det.querySelector('.bb-topic-add').addEventListener('click', async () => {
+        chapter.topics.push({ id: cid(), title: 'Neues Thema', fragen: [], infos: [], quellen: [] });
+        await persist();
+        render();
+        reopen(chapterId);
+      });
+
+      det.querySelectorAll('details.bb-topic-edit').forEach(tdet => {
+        const topicId = tdet.getAttribute('data-topic');
+        const topic = chapter.topics.find(t => t.id === topicId);
+
+        tdet.querySelector('.bb-t-save').addEventListener('click', async () => {
+          topic.title = tdet.querySelector('.bb-t-title').value || 'Ohne Titel';
+          topic.fragen = linesToList(tdet.querySelector('.bb-t-fragen').value);
+          topic.infos = linesToList(tdet.querySelector('.bb-t-infos').value);
+          topic.quellen = linesToList(tdet.querySelector('.bb-t-quellen').value);
+          await persist();
+          render();
+          reopen(chapterId, topicId);
+        });
+
+        tdet.querySelector('.bb-t-delete').addEventListener('click', async () => {
+          if (!confirm(`Thema "${topic.title}" wirklich löschen?`)) return;
+          const imageKeys = (topic.notes || []).filter(n => n.hasImage).map(n => `img:${n.id}`);
+          chapter.topics = chapter.topics.filter(t => t.id !== topicId);
+          await persist();
+          imageKeys.forEach(k => { delete imageCache[k]; store.del(k); });
+          render();
+          reopen(chapterId);
+        });
+      });
+    });
+  }
+
+  function reopen(chapterId, topicId) {
+    const det = app.querySelector(`details.bb-chapter[data-chapter="${chapterId}"]`);
+    if (det) {
+      det.open = true;
+      if (topicId) {
+        const tdet = det.querySelector(`details.bb-topic-edit[data-topic="${topicId}"]`);
+        if (tdet) tdet.open = true;
+      }
+    }
+  }
+
+  function render() {
+    if (!state.data) return;
+    if (state.screen === 'home') renderHome();
+    else if (state.screen === 'chapter') renderChapter();
+    else if (state.screen === 'topic') renderTopic();
+    else if (state.screen === 'manage') renderManage();
+    else if (state.screen === 'note-add') renderNoteAdd();
+  }
+
+  // Lightweight access gate: this page will be hosted at a public URL, so this
+  // keeps out casual visitors who land on the link. It's a client-side check —
+  // anyone determined enough to read the page source can bypass it — but the
+  // password itself is never in that source: only its SHA-256 hash, chosen and
+  // stored by the person on their own device the first time they open it.
+  const PW_HASH_KEY = 'bb_pw_hash';
+  const PW_UNLOCKED_KEY = 'bb_pw_unlocked';
+
+  function getLocal(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function setLocal(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+  function removeLocal(k) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+
+  async function sha256Hex(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function lockApp() {
+    removeLocal(PW_UNLOCKED_KEY);
+    renderGate();
+  }
+
+  function renderGate() {
+    const hasPw = !!getLocal(PW_HASH_KEY);
+    document.getElementById('bb-app').innerHTML = `
+      <div class="bb-body" style="padding-top: 60px; text-align: center;">
+        <h2>${hasPw ? 'Gesperrt' : 'Passwort festlegen'}</h2>
+        <p class="bb-hint">${hasPw
+          ? 'Nur für dich — bitte Passwort eingeben.'
+          : 'Leg ein Passwort fest. Es wird nur auf diesem Gerät gespeichert, nirgendwo sonst.'}</p>
+        <div id="bb-gate-error"></div>
+        <div class="bb-field"><input type="password" id="bb-gate-pw" placeholder="Passwort" style="text-align:center;" /></div>
+        ${hasPw ? '' : '<div class="bb-field"><input type="password" id="bb-gate-pw2" placeholder="Passwort wiederholen" style="text-align:center;" /></div>'}
+        <button class="bb-btn-primary" id="bb-gate-submit">${hasPw ? 'Entsperren' : 'Festlegen und öffnen'}</button>
+      </div>`;
+
+    const pwInput = document.getElementById('bb-gate-pw');
+    pwInput.focus();
+    pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('bb-gate-submit').click(); });
+
+    document.getElementById('bb-gate-submit').addEventListener('click', async () => {
+      const pw = document.getElementById('bb-gate-pw').value;
+      const errBox = document.getElementById('bb-gate-error');
+      if (!pw) return;
+      if (hasPw) {
+        const hash = await sha256Hex(pw);
+        if (hash === getLocal(PW_HASH_KEY)) {
+          setLocal(PW_UNLOCKED_KEY, '1');
+          load();
+        } else {
+          errBox.innerHTML = '<div class="bb-error">Falsches Passwort.</div>';
+        }
+      } else {
+        const pw2 = document.getElementById('bb-gate-pw2').value;
+        if (pw.length < 4) { errBox.innerHTML = '<div class="bb-error">Mindestens 4 Zeichen.</div>'; return; }
+        if (pw !== pw2) { errBox.innerHTML = '<div class="bb-error">Passwörter stimmen nicht überein.</div>'; return; }
+        setLocal(PW_HASH_KEY, await sha256Hex(pw));
+        setLocal(PW_UNLOCKED_KEY, '1');
+        load();
+      }
+    });
+  }
+
+  if (window.crypto && window.crypto.subtle && getLocal(PW_UNLOCKED_KEY) === '1' && getLocal(PW_HASH_KEY)) {
+    load();
+  } else if (window.crypto && window.crypto.subtle) {
+    renderGate();
+  } else {
+    // No secure context (e.g. plain http://) — crypto.subtle needs https, so skip the gate rather than break the app.
+    load();
+  }
+})();
+</script>
+</body>
+</html>
